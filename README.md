@@ -1,1 +1,0 @@
-# ihsancetin141.github.io
