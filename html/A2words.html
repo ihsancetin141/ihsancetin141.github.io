@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Quiz & Flash Card</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        .option {
+            padding: 10px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            min-width: 100px;
+            text-align: center;
+        }
+        .option:hover {
+            background-color: #28a745;
+            color: white;
+        }
+        #score-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+        .flashcard {
+            border: 2px solid #000;
+            padding: 20px;
+            margin: 20px auto;
+            width: 90%;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            font-weight: bold;
+            background-color: #f9f9f9;
+            color: #000;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+        .hidden {
+            display: none;
+        }
+        .highlighted-word {
+            font-size: 48px;
+            font-weight: bold;
+            color: #000;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        #incorrect-words {
+            border: 1px solid #ddd;
+            margin: 20px auto;
+            padding: 10px;
+            width: 90%;
+            height: 100px;
+            overflow-y: auto;
+            text-align: left;
+            font-size: 14px;
+        }
+        .level-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .level-buttons button {
+            padding: 10px 15px;
+            margin: 10px 5px;
+            background-color: #f0f0f0;
+            color: black;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .level-buttons button:hover {
+            background-color: #e0e0e0;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 10px 5px;
+            background-color: #f0f0f0;
+            color: black;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="level-buttons">
+        <button onclick="window.open('https://ihsancetin.com.tr/html/A1words.html', '_blank')">A1</button>
+        <button onclick="window.open('https://ihsancetin.com.tr/html/A2words.html', '_blank')">A2</button>
+        <button onclick="window.open('https://ihsancetin.com.tr/html/B1words.html', '_blank')">B1</button>
+        <button onclick="window.open('https://ihsancetin.com.tr/html/B2words.html', '_blank')">B2</button>
+        <button onclick="window.open('https://ihsancetin.com.tr/html/C1words.html', '_blank')">C1</button>
+        <button onclick="window.open('https://ihsancetin.com.tr/words', '_blank')">Main</button>
+    </div>
+
+    <button id="switch-mode">Switch to Flash Card Mode</button>
+
+    <div id="quiz-container">
+        <h1 style="color: gray; font-weight: normal;">Word Quiz</h1>
+        <div id="score-container">
+            <div id="quiz-true-score">True: 0</div>
+            <div id="quiz-false-score">False: 0</div>
+        </div>
+        <div id="question">...</div>
+        <div id="highlighted-word" class="highlighted-word">...</div>
+        <div id="options" class="options"></div>
+        <div id="incorrect-words"></div>
+    </div>
+
+    <div id="flashcard-container" class="hidden">
+        <h1 style="color: gray; font-weight: normal;">Flash Card</h1>
+        <div id="score-container">
+            <div id="flash-true-score">True: 0</div>
+            <div id="flash-false-score">False: 0</div>
+        </div>
+        <div class="flashcard" id="flashcard"></div>
+        <button id="mark-true">Correct</button>
+        <button id="mark-false">Incorrect</button>
+        <button id="next-card">Next Card</button>
+        <div id="incorrect-words"></div>
+    </div>
+
+    <script>
+        const words = [
+            
+
+    ["ability", "(n)_yetenek_kabiliyet"],
+    ["able", "(adj)_yapabilir_yetenekli"],
+    ["abroad", "(adv)_yurt_dışında"],
+    ["accept", "(v)_kabul_etmek"],
+    ["accident", "(n)_kaza"],
+    ["according to", "(prep)_-a_-e_göre"],
+    ["achieve", "(v)_başarmak_ulaşmak"],
+    ["act", "(v)_hareket_etmek_rol_almak"],
+    ["active", "(adj)_faal_hareketli"],
+    ["actually", "(adv)_aslında_gerçekte"],
+    ["adult", "(adj)_yetişkin"],
+    ["advantage", "(n)_avantaj"],
+    ["adventure", "(n)_macera"],
+    ["advertise", "(v)_reklam_yapmak"],
+    ["advertisement", "(n)_reklam"],
+    ["advertising", "(n)_reklamcılık"],
+    ["affect", "(v)_etkilemek"],
+    ["after", "(adv)_sonra"],
+    ["after", "(conj)_-den_sonra"],
+    ["against", "(prep)_-e_karşı"],
+    ["ah", "(excl)_oooh_aha"],
+    ["airline", "(n)_havayolu"],
+    ["alive", "(adj)_canlı"],
+    ["all", "(adv)_tamamen"],
+    ["all right", "(adj)_iyi"],
+    ["all right", "(adv)_tamam_pekâla"],
+    ["all right", "(excl)_peki_olur_tamam"],
+    ["allow", "(v)_izin_vermek_olanak_sağlamak"],
+    ["almost", "(adv)_hemen_hemen_yaklaşık_neredeyse"],
+    ["alone", "(adj)_yalnız_tek_başına"],
+    ["alone", "(adv)_yalnız"],
+    ["along", "(adv)_boyunca_yanısıra_ileri"],
+    ["along", "(prep)_boyunca"],
+    ["already", "(adv)_çoktan_zaten"],
+    ["alternative", "(n)_alternatif"],
+    ["although", "(conj)_-e_rağmen_-se_de_-e_karşın"],
+    ["among", "(prep)_arasında"],
+    ["amount", "(n)_miktar"],
+    ["ancient", "(adj)_eski"],
+    ["ankle", "(n)_ayak_bileği"],
+    ["any", "(adv)_hiç_daha_biraz"],
+    ["any more", "(adv)_artık_bundan_sonra"],
+    ["anybody", "(pron)_hiç_kimse_herkes"],
+    ["anyway", "(adv)_her_ne_yse_zaten"],
+    ["anywhere", "(adv)_herhangi_bir_yer_hiçbir_yer"],
+    ["anywhere", "(pron)_bir_yer"],
+    ["app", "(n)_uygulama"],
+    ["appear", "(v)_görünmek_ortaya_çıkmak"],
+    ["appearance", "(n)_görünüş_ortaya_çıkma"],
+    ["apply", "(v)_başvurmak_uygulamak_sürmek"],
+    ["architect", "(n)_mimar"],
+    ["architecture", "(n)_mimari"],
+    ["argue", "(v)_tartışmak_ileri_sürmek"],
+    ["argument", "(n)_tartışma_iddia"],
+    ["army", "(n)_ordu"],
+    ["arrange", "(v)_düzenlemek_ayarlamak"],
+    ["arrangement", "(n)_düzenleme"],
+    ["as", "(adv)_-dığı_için_çünkü_-dıkça_-iken_gibi"],
+    ["as", "(conj)_ki_madem_olduğu_gibi"],
+    ["asleep", "(adj)_uykulu_uykuda"],
+    ["assistant", "(adj)_yardımcı"],
+    ["assistant", "(n)_yardımcı"],
+    ["athlete", "(n)_atlet_sporcu"],
+    ["attack", "(n)_saldırı"],
+    ["attack", "(v)_saldırmak"],
+    ["attend", "(v)_katılmak"],
+    ["attention", "(excl)_hazır_ol"],
+    ["attention", "(n)_dikkat_ilgi_bakım"],
+    ["attractive", "(adj)_çekici"],
+    ["audience", "(n)_izleyici_dinleyici"],
+    ["author", "(n)_yazar"],
+    ["available", "(adj)_hazır_mevcut_uygun_görüşmeye_hazır"],
+    ["average", "(adj)_ortalama_sıradan"],
+    ["average", "(n)_ortalama"],
+    ["avoid", "(v)_sakınmak_kaçınmak"],
+    ["award", "(n)_ödül"],
+    ["awful", "(adj)_berbat_kötü"],
+
+    ["back", "(adj)_arka_geri"],
+    ["background", "(n)_özgeçmiş_geçmiş_deneyimler_arka_plan"],
+    ["badly", "(adv)_kötü_fena_şekilde"],
+    ["bar", "(n)_bar_kalıp_parça"],
+    ["baseball", "(n)_beysbol"],
+    ["based", "(adj)_dayanmış_-e_dayanan"],
+    ["basketball", "(n)_basketbol"],
+    ["bean", "(n)_fasulye"],
+    ["bear", "(n)_ayı"],
+    ["beat", "(v)_vurmak_dövmek"],
+    ["beef", "(n)_et_sığır_eti"],
+    ["before", "(adv)_daha_önce_daha_önceden"],
+    ["before", "(conj)_-den_önce"],
+    ["behave", "(v)_davranmak"],
+    ["behaviour", "(n)_davranış"],
+    ["belong", "(v)_ait_olmak"],
+    ["belt", "(n)_kemer_kuşak"],
+    ["benefit", "(n)_yarar_fayda_çıkar"],
+    ["best", "(adv)_en_iyisi"],
+    ["best", "(n)_en_iyisi"],
+    ["better", "(adv)_daha_iyi_şekilde"],
+    ["between", "(adv)_iki_yer_insan_eşyayı_ayıran_boşluk_zaman_arası"],
+    ["billion", "(num)_milyar"],
+    ["bin", "(n)_çöp_kovası"],
+    ["biology", "(n)_biyoloji"],
+    ["birth", "(n)_doğum_doğuş"],
+    ["biscuit", "(n)_bisküvi"],
+    ["bit", "(n)_parça_kırıntı_küçük_parça"],
+    ["blank", "(adj)_boş_içinde_hiç_bir_şey_olmayan"],
+    ["blank", "(n)_boş_kullanılmamış_kağıt"],
+    ["blood", "(n)_kan"],
+    ["blow", "(v)_esmek_körüklemek_üflemek"],
+    ["board", "(n)_tahta_pano_kurul"],
+    ["boil", "(v)_kaynatmak_fokurdatmak"],
+    ["bone", "(n)_kemik_kılçık"],
+    ["book", "(v)_yer_ayırtmak"],
+    ["borrow", "(v)_ödünç_almak"],
+    ["boss", "(n)_patron"],
+    ["bottom", "(adj)_en_alt_düzeyde"],
+    ["bottom", "(n)_dip_alt"],
+    ["bowl", "(n)_tas_kâse"],
+    ["brain", "(n)_beyin"],
+    ["bridge", "(n)_köprü"],
+    ["bright", "(adj)_parlak"],
+    ["brilliant", "(adj)_zeki_pırıl_pırıl_harika"],
+    ["broken", "(adj)_kırık_kırılmış_bozuk"],
+    ["brush", "(n)_fırça"],
+    ["brush", "(v)_fırçalamak"],
+    ["burn", "(v)_yanmak_yakmak"],
+    ["businessman", "(n)_iş_adamı"],
+    ["button", "(n)_düğme_buton"],
+    ["backwards", "(adv)_geriye_geriye_doğru_geri"],
+    ["bake", "(v)_fırında_pişirmek_pişmek"],
+    ["balance", "(n)_denge"],
+    ["balance", "(v)_tartmak_dengelemek"],
+    ["ban", "(n)_yasak"],
+    ["ban", "(v)_yasaklamak"],
+    ["base", "(n)_kök_temel_dayanak"],
+    ["base", "(v)_dayandırmak_dayamak"],
+    ["basic", "(adj)_temel"],
+    ["basis", "(n)_temel_esas_kaynak"],
+    ["battery", "(n)_batarya_akü_pil"],
+    ["battle", "(n)_savaş"],
+    ["beauty", "(n)_güzellik"],
+    ["bee", "(n)_arı"],
+    ["belief", "(n)_inanç_iman_güven"],
+    ["bell", "(n)_zil_çan"],
+    ["bend", "(n)_dönemeç_viraj"],
+    ["bend", "(v)_eğmek_bükmek"],
+    ["benefit", "(v)_faydalanmak_yararlanmak"],
+    ["better", "(n)_en_azından_daha_da_iyiye_doğru"],
+    ["bite", "(n)_ısırık_lokma"],
+    ["bite", "(v)_ısırmak_dișlemek_sokmak"],
+    ["block", "(n)_blok"],
+    ["block", "(v)_engel_olmak_tıkamak"],
+    ["board", "(v)_gemi_uçak_binmek"],
+    ["bomb", "(n)_bomba"],
+    ["bomb", "(v)_bombalamak"],
+    ["border", "(n)_sınır_hat"],
+    ["bother", "(v)_canını_sıkmak_rahatsız_etmek"],
+    ["branch", "(n)_dal_şube"],
+    ["brand", "(n)_marka"],
+    ["brand", "(v)_damgalamak_lekelemek"],
+    ["brave", "(adj)_cesur"],
+    ["breath", "(n)_nefes_soluk_fısıltı"],
+    ["breathe", "(v)_solumak_nefes_almak"],
+    ["breathing", "(n)_nefes_alıp_verme"],
+    ["bride", "(n)_gelin"],
+    ["bubble", "(n)_kabarcık_hava_kabarcığı_baloncuk"],
+    ["bury", "(v)_gömmek_defnetmek"],
+    ["by", "(adv)_geçerek_geçip_giderek"],
+    ["camp", "(n)_kamp"],
+    ["camp", "(v)_kamp_yapmak"],
+    ["camping", "(n)_kamp_yapma"],
+    ["can", "(n)_metal_kutu"],
+    ["care", "(n)_ilgi_itina_bakım_özen"],
+    ["care", "(v)_bakmak_ilgilenmek"],
+    ["careful", "(adj)_dikkatli_özenli"],
+    ["carefully", "(adv)_dikkatlice"],
+    ["carpet", "(n)_halı"],
+    ["cartoon", "(n)_çizgi_film_karikatür"],
+    ["case", "(n)_dava_durum_hadise_vaka"],
+    ["cash", "(n)_nakit_peşin_para"],
+    ["castle", "(n)_kale_şato"],
+    ["catch", "(v)_yakalamak_tutmak_hastalık_yakalanmak"],
+    ["cause", "(n)_sebep_neden"],
+    ["cause", "(v)_sebep_olmak_neden_olmak"],
+    ["celebrate", "(v)_kutlamak_anmak_övmek"],
+    ["celebrity", "(n)_ün_ünlü_kimse_tanınmış_kimse"],
+    ["certain", "(adj)_kesin_muhakkak_emin"],
+    ["certainly", "(adv)_kesinlikle_elbette"],
+    ["chance", "(n)_olasılık_ihtimal_şans"],
+    ["character", "(n)_karakter_özellik"],
+    ["charity", "(n)_hayır_hayırseverlik"],
+    ["chat", "(n)_sohbet_hoşbeş_lakırdı"],
+    ["chat", "(v)_muhabbet_etmek_sohbet_etmek"],
+    ["check", "(n)_kontrol"],
+    ["chef", "(n)_şef"],
+    ["chemistry", "(n)_kimya"],
+    ["chip", "(n)_patates_kızartması_çip"],
+    ["choice", "(n)_seçim_seçenek_tercih"],
+    ["church", "(n)_kilise"],
+    ["cigarette", "(n)_sigara"],
+    ["circle", "(n)_daire"],
+    ["circle", "(v)_çevrelemek_kuşatmak_daire_çizmek"],
+    ["classical", "(adj)_klasik"],
+    ["clear", "(adj)_açık_belli"],
+    ["clearly", "(adv)_açıkça_anlaşılır_biçimde"],
+    ["clever", "(adj)_zeki_akıllı"],
+    ["climate", "(n)_iklim_hava_bölge"],
+    ["close", "(adj)_yakın_kapalı"],
+    ["closed", "(adj)_kapalı"],
+    ["clothing", "(n)_giyim_giysi_elbise"],
+    ["cloud", "(n)_bulut"],
+    ["coach", "(n)_otobüs_koç"],
+    ["coast", "(n)_sahil_kıyı"],
+    ["code", "(n)_kod_şifre"],
+    ["colleague", "(n)_meslektaş_iş_arkadaşı"],
+    ["collect", "(v)_toplamak"],
+    ["column", "(n)_kolon_sütun_köşe_yazısı"],
+    ["comedy", "(n)_komedi"],
+    ["comfortable", "(adj)_konforlu_rahat"],
+    ["comment", "(n)_yorum_fikir"],
+    ["communicate", "(v)_iletişim_kurmak_haberleşmek"],
+    ["community", "(n)_cemiyet_cemaat_topluluk"],
+    ["compete", "(v)_yarışmak_rekabet_etmek"],
+    ["competition", "(n)_yarışma_rekabet"],
+    ["complain", "(v)_şikayet_etmek_söylenmek_yakınmak"],
+    ["completely", "(adv)_tam_olarak_tamamiyle"],
+    ["condition", "(n)_durum_koşul_hastalık"],
+    ["conference", "(n)_konferans_kongre_görüşme"],
+    ["connect", "(v)_bağlamak_bitiştirmek_bağlantı_kurmak"],
+    ["connected", "(adj)_bağlantılı"],
+    ["consider", "(v)_dikkate_almak_hesaba_katmak_düşünmek"],
+    ["contain", "(v)_kapsamak_içermek"],
+    ["context", "(n)_bağlam_sözün_gelişi_kaynak_içerik"],
+    ["continent", "(n)_kıta"],
+    ["continue", "(v)_devam_etmek_sürmek"],
+    ["control", "(n)_kontrol_teftiş"],
+    ["control", "(v)_kontrol_etmek_denetlemek"],
+    ["cook", "(n)_aşçı"],
+ 
+    ["cooker", "(n)_ocak"],
+    ["copy", "(n)_kopya_nüsha"],
+    ["copy", "(v)_kopya_etmek_çoğaltmak_taklit_etmek"],
+    ["corner", "(n)_köşe"],
+    ["correctly", "(adv)_doğru_bir_şekilde"],
+    ["count", "(v)_saymak_hesaba_katmak"],
+    ["couple", "(n)_çift_eş"],
+    ["cover", "(v)_kapamak_örtmek_kaplamak"],
+    ["crazy", "(adj)_aptal_acayip_kızgın_çılgın"],
+    ["creative", "(adj)_yaratıcı"],
+    ["credit", "(n)_kredi_geri_ödenme_takdir_övgü"],
+    ["crime", "(n)_suç_kabahat"],
+    ["criminal", "(n)_suçlu_sabıkalı"],
+    ["cross", "(n)_çarpı_işareti_haç"],
+    ["cross", "(v)_karşıya_geçmek"],
+    ["crowd", "(n)_kalabalık"],
+    ["crowded", "(adj)_kalabalık_dolu"],
+    ["cry", "(v)_ağlamak_bağırmak"],
+    ["cupboard", "(n)_dolap"],
+    ["curly", "(adj)_kıvırcık"],
+    ["cycle", "(n)_devir_döngü_bisiklet"],
+    ["cycle", "(v)_bisiklete_binmek"],
+    ["daily", "(adj)_günlük"],
+    ["danger", "(n)_tehlike_risk"],
+    ["dark", "(n)_karanlık"],
+    ["data", "(n)_bilgi_veri"],
+    ["dead", "(adj)_ölü_cansız"],
+    ["deal", "(v)_ilgilenmek_dağıtmak"],
+    ["dear", "(excl)_canım_hayatım"],
+    ["death", "(n)_ölüm_vefat"],
+    ["decision", "(n)_karar_hüküm"],
+    ["deep", "(adj)_derin"],
+    ["definitely", "(adv)_kesinlikle"],
+    ["degree", "(n)_derece_aşama_lisans"],
+    ["dentist", "(n)_diş_hekimi"],
+    ["department", "(n)_daire_bölüm"],
+    ["depend", "(v)_-e_bağlı_olmak_güvenmek"],
+    ["desert", "(n)_çöl_bozkır_ıssız_yer"],
+    ["designer", "(n)_tasarımcı"],
+    ["destroy", "(v)_tahrip_etmek_yıkmak"],
+    ["detective", "(n)_dedektif"],
+    ["develop", "(v)_gelişmek_ilerlemek_büyümek"],
+    ["device", "(n)_alet_araç_cihaz_hile_oyun_arma"],
+    ["diary", "(n)_günlük"],
+    ["differently", "(adv)_farklı_bir_şekilde"],
+    ["digital", "(adj)_dijital_sayısal"],
+    ["direct", "(adj)_doğrudan_dolaysız"],
+    ["direction", "(n)_yön_istikamet_talimat_yönerge"],
+    ["director", "(n)_yönetmen_müdür_yönetici"],
+    ["disagree", "(v)_aynı_fikirde_olmamak_uyuşmamak"],
+    ["disappear", "(v)_gözden_kaybolmak_yok_olmak"],
+    ["disaster", "(n)_felaket"],
+    ["discover", "(v)_keşfetmek_ortaya_çıkarmak_bulmak"],
+    ["discovery", "(n)_keşif_buluş"],
+    ["discussion", "(n)_tartışma_görüşme"],
+    ["disease", "(n)_hastalık_rahatsızlık"],
+    ["distance", "(n)_mesafe_uzaklık"],
+    ["divorced", "(adj)_boşanmış_ayrılmış"],
+    ["document", "(n)_doküman_belge"],
+    ["double", "(adj)_çift_eş_iki_kat_iki_misli"],
+    ["double", "(det)_iki_kat_çift"],
+    ["double", "(pron)_iki_kat"],
+    ["double", "(v)_ikiye_katlamak"],
+    ["download", "(n)_yükleme_indirme_programı"],
+    ["download", "(v)_indirmek"],
+    ["downstairs", "(adj)_aşağı"],
+    ["drama", "(n)_oyun_drama"],
+    ["drawing", "(n)_çizim_çizme"],
+    ["dream", "(n)_rüya_hayal"],
+    ["dream", "(v)_rüya_görmek_hayal_etmek"],
+    ["drive", "(n)_sürüş"],
+    ["driving", "(n)_sürüş"],
+    ["drop", "(v)_düşmek_düşürmek_alçalmak_bırakmak"],
+    ["drug", "(n)_ilaç_uyuşturucu"],
+    ["dry", "(adj)_kuru"],
+    ["dry", "(v)_kurutmak"],
+
+    ["earn", "(v)_kazanmak_para"],
+    ["earth", "(n)_dünya_yeryüzü_toprak_kara"],
+    ["easily", "(adv)_kolaylıkla"],
+    ["education", "(n)_eğitim"],
+    ["effect", "(n)_etki_tesir_netice"],
+    ["either", "(adv)_-de_-da"],
+    ["either", "(det)_her_ikisi"],
+    ["either", "(pron)_ikisinden_herhangi_biri_biri"],
+    ["electric", "(adj)_elektrikli_heyecan_verici"],
+    ["electrical", "(adj)_elektrik_elektro_elektrikli"],
+    ["electricity", "(n)_elektrik"],
+    ["electronic", "(adj)_elektronik"],
+    ["employ", "(v)_çalıştırmak_iş_vermek_işe_almak_kullanmak"],
+    ["employee", "(n)_işçi"],
+    ["employer", "(n)_işveren"],
+    ["empty", "(adj)_boş"],
+    ["ending", "(n)_bitiş"],
+    ["energy", "(n)_enerji_güç"],
+    ["engine", "(n)_motor_makine_lokomotif"],
+    ["engineer", "(n)_mühendis"],
+    ["enormous", "(adj)_büyük_muazzam_kocaman"],
+    ["enter", "(v)_girmek"],
+    ["environment", "(n)_çevre"],
+    ["equipment", "(n)_donanım_teçhizat_ekipman"],
+    ["error", "(n)_yanlış_hata_hatalık"],
+    ["especially", "(adv)_özellikle_bilhassa"],
+    ["essay", "(n)_makale_deneme"],
+    ["everyday", "(adj)_her_gün_gündelik_günlük"],
+    ["everywhere", "(adv)_her_yer_her_yerde"],
+    ["evidence", "(n)_tanık_delil_kanıt"],
+    ["exact", "(adj)_tam_tamı_tamına_dakik_eksiksiz"],
+    ["exactly", "(adv)_tam_olarak"],
+    ["excellent", "(adj)_mükemmel"],
+    ["except", "(prep)_dışında_haricinde"],
+    ["exist", "(v)_var_olmak_olmak_bulunmak"],
+    ["expect", "(v)_umak_beklemek"],
+    ["experience", "(n)_tecrübe_deneyim_pratik"],
+    ["experiment", "(n)_deney"],
+    ["expert", "(adj)_bilgili_uzman"],
+    ["expert", "(n)_uzman_bilirkişi"],
+    ["explanation", "(n)_açıklama"],
+    ["express", "(v)_ifade_etmek_anlatmak_açıklamak"],
+    ["expression", "(n)_ifade_ifade_etme"],
+    ["extreme", "(adj)_aşırı_olağanüstü_ölçüsüz_son_derece"],
+    ["extremely", "(adv)_aşırı_aşırı_boyutta_son_derece_oldukça"],
+
+    ["factor", "(n)_etken_unsur"],
+    ["factory", "(n)_fabrika"],
+    ["fail", "(v)_başaramamak_becerememek_başarısız_olmak"],
+    ["fair", "(adj)_sarışın_fuar_adil_dürüst_açık"],
+    ["fall", "(n)_sonbahar"],
+    ["fan", "(n)_fanatik_hayran_vantilatör"],
+    ["farm", "(v)_çiftçilik_yapmak_yetiştirmek"],
+    ["farming", "(n)_tarım_çiftçilik"],
+    ["fashion", "(n)_moda_adet_tarz_biçim"],
+    ["fat", "(n)_yağ"],
+    ["fear", "(n)_korku_endişe"],
+    ["feature", "(n)_özellik"],
+    ["feed", "(v)_beslemek_yiyecek_vermek"],
+    ["female", "(adj)_dişi_kadın"],
+    ["female", "(n)_kadın"],
+    ["fiction", "(n)_düş_uydurma_kurgu"],
+    ["field", "(n)_tarla_alan_arazi"],
+    ["fight", "(n)_kavga_dövüş_savaş"],
+    ["fight", "(v)_dövüşmek_savaşmak_kavga_etmek"],
+    ["figure", "(n)_figür_şekil_vücut_yapısı_tip_rakam_şahsiyet"],
+    ["film", "(v)_film_çekmek_kaplamak"],
+    ["final", "(n)_final"],
+    ["finally", "(adv)_sonunda_nihayet"],
+    ["finger", "(n)_parmak"],
+    ["finish", "(n)_varış_bitiş_son"],
+    ["first", "(n)_ilk"],
+    ["firstly", "(adv)_ilk_olarak_birinci_olarak"],
+    ["fish", "(v)_balık_tutmak"],
+    ["fishing", "(n)_balık_tutma_balıkçılık"],
+    ["fit", "(adj)_sağlıklı_zinde_formda_uygun"],
+    ["fit", "(v)_uymak_yakışmak"],
+    ["fix", "(v)_tamir_etmek_yerleştirmek"],
+    ["flat", "(adj)_düz_havasız_sıkıcı"],
+    ["flu", "(n)_grip"],
+    ["fly", "(n)_sinek"],
+    ["flying", "(adj)_uçan_uçucu"],
+    ["flying", "(n)_köpük"],
+    ["focus", "(n)_odak_noktası_odak"],
+    ["focus", "(v)_odaklamak_bir_noktada_toplamak yoğunlaşmak"],
+    ["following", "(adj)_takip_eden_sonraki"],
+    ["foreign", "(adj)_yabancı"],
+    ["forest", "(n)_orman"],
+    ["fork", "(n)_çatal"],
+    ["formal", "(adj)_resmi_kamusal"],
+    ["fortunately", "(adv)_şans_esi_neyse_ki"],
+    ["forward", "(adv)_ileriye_doğru"],
+    ["free", "(adv)_para_ödemeden_ücretsiz_olarak_bedava"],
+    ["fresh", "(adj)_taze_yeni_serin"],
+    ["fridge", "(n)_buzdolabı"],
+    ["frog", "(n)_kurbağa"],
+    ["fun", "(adj)_eğlenceli_zevkli"],
+    ["furniture", "(n)_ev_eşyası_mobilya"],
+    ["further", "(adj)_ileri_daha_çok_başka"],
+    ["future", "(adj)_gelecek_istikbal"],
+
+    ["gallery", "(n)_galeri"],
+    ["gap", "(n)_boşluk_aralık_fark"],
+    ["gas", "(n)_gaz"],
+    ["gate", "(n)_dış_kapı_giriş_kapısı"],
+    ["general", "(adj)_genel_yaygın"],
+    ["gift", "(n)_hediye_armağan_doğuştan_yetenek"],
+    ["goal", "(n)_amaç_hedef_gol"],
+    ["god", "(n)_tanrı"],
+    ["gold", "(adj)_altından_yapılmış_altın_renkli"],
+    ["gold", "(n)_altın"],
+    ["golf", "(n)_golf"],
+    ["good", "(n)_yararına_iyiliğine_çıkarına"],
+    ["government", "(n)_hükümet_devlet_idare_yönetim"],
+    ["grass", "(n)_çimen_yeşillik"],
+    ["greet", "(v)_selamlamak_kutlamak_karşılamak"],
+    ["ground", "(n)_toprak_zemin_yer"],
+    ["guest", "(n)_misafir_konuk"],
+    ["guide", "(n)_rehber_kılavuz"],
+    ["guide", "(v)_rehberlik_etmek_yönlendirmek_yol_göstermek"],
+    ["gun", "(n)_silah_top_tüfek"],
+    ["guy", "(n)_adam_herif"],
+    ["habit", "(n)_alışkanlık_adet_huy"],
+    ["half", "(adv)_kısmen_yarı_yarısı_yarı_yarıya"],
+    ["hall", "(n)_giriş_koridor_salon_antre"],
+    ["happily", "(adv)_mutlulukla_mutluca_isteklice"],
+    ["headache", "(n)_baş_ağrısı"],
+    ["heart", "(n)_kalp"],
+    ["heat", "(n)_sıcaklık_hararet_ısı_ateş"],
+    ["heat", "(v)_ısıtmak"],
+    ["heavy", "(adj)_ağır_yoğun"],
+    ["height", "(n)_yükseklik_uzunluk_boy"],
+    ["helpful", "(adj)_yardımsever"],
+    ["hero", "(n)_kahraman"],
+    ["hers", "(pron)_bayan_ona_ait_onunki"],
+    ["herself", "(pron)_bayan_kendi_kendini_kendine"],
+    ["hide", "(v)_saklamak_gizlemek_saklı_tutmak"],
+    ["high", "(adv)_yükseklerde_yukarıda"],
+    ["hill", "(n)_tepe_yükselti"],
+    ["himself", "(pron)_erkek_kendi_kendisi_kendini_kendisini"],
+    ["his", "(pron)_erkek_onunki"],
+    ["hit", "(n)_çarpma_vuruş_popüler"],
+    ["hit", "(v)_vurmak_çarpma_isabet_ettirmek_afet_vs_kötü_etkilemek"],
+    ["hockey", "(n)_hokey"],
+    ["hold", "(v)_tutmak_elinde_tutmak_düzenlemek_iddia_etmek"],
+    ["hole", "(n)_delik_çukur_oyuk"],
+    ["home", "(adj)_ev_yapımı_ev_sahibi_yurt_ici"],
+    ["hope", "(n)_umut_beklenti"],
+    ["huge", "(adj)_ayı_gibi_kocaman_dev_büyük"],
+    ["human", "(adj)_insani_insana_ait_özgü"],
+    ["human", "(n)_insan_oğlu"],
+    ["hurt", "(adj)_yaralanmış_incinmiş"],
+    ["hurt", "(v)_yaralamak_acımak_incitmek"],
+
+    ["ideal", "(adj)_uygun_ideal"],
+    ["identify", "(v)_tanımlamak_saptamak"],
+    ["ill", "(adj)_hasta_kötü"],
+    ["illness", "(n)_hastalık"],
+    ["image", "(n)_görüntü_şekil"],
+    ["immediately", "(adv)_hemen_aniden_derhal"],
+    ["impossible", "(adj)_imkansız"],
+    ["included", "(adj)_dahil_ine_alan"],
+    ["including", "(prep)_içeren_dahil_eden_dahil"],
+    ["increase", "(n)_artış"],
+    ["increase", "(v)_artmak_arttırmak"],
+    ["incredible", "(adj)_inanılmaz"],
+    ["independent", "(adj)_bağımsız"],
+    ["individual", "(adj)_bireysel"],
+    ["individual", "(n)_birey"],
+    ["industry", "(n)_sanayi"],
+    ["informal", "(adj)_gayri_resmi"],
+    ["injury", "(n)_yaralanma_sakatlanma"],
+    ["insect", "(n)_böcek"],
+    ["inside", "(adj)_iç"],
+    ["inside", "(adv)_içeriye_içeriye_doğru"],
+    ["inside", "(n)_içi_iç_taraf"],
+    ["inside", "(prep)_içerisinde"],
+    ["instead", "(adv)_in_yerine"],
+    ["instruction", "(n)_talimat_öğretim"],
+    ["instructor", "(n)_öğretmen_eğitmen"],
+    ["instrument", "(n)_alet_enstrüman_vasıta"],
+    ["intelligent", "(adj)_zeki_akıllı"],
+    ["international", "(adj)_uluslararası"],
+    ["introduction", "(n)_tanıtım_başlangıç"],
+    ["invent", "(v)_icat_etmek"],
+    ["invention", "(n)_icat"],
+    ["invitation", "(n)_davet"],
+    ["invite", "(v)_davet_etmek_çağırmak_neden_olmak"],
+    ["involve", "(v)_içermek_gerektirmek"],
+    ["item", "(n)_madde_parça"],
+    ["itself", "(pron)_kendi_kendisi_kendisini"],
+
+    ["jam", "(n)_reçel_sıkışıklık"],
+    ["jazz", "(n)_caz"],
+    ["jewellery", "(n)_kuyumculuk_mücevher"],
+    ["joke", "(n)_şaka_espri"],
+    ["joke", "(v)_şaka_yapmak"],
+    ["journalist", "(n)_gazeteci"],
+    ["jump", "(n)_zıplama_sıçrayış"],
+    ["jump", "(v)_atlamak_zıplamak"],
+    ["kid", "(n)_çocuk"],
+    ["kill", "(v)_öldürmek"],
+    ["king", "(n)_kral"],
+    ["knee", "(n)_diz"],
+    ["knife", "(n)_bıçak"],
+    ["knock", "(v)_kapı_çalmak_vurmak_çarpma"],
+    ["knowledge", "(n)_bilgi"],
+    ["lab", "(n)_laboratuvar"],
+    ["lady", "(n)_hanım_efendi"],
+    ["lake", "(n)_göl"],
+    ["lamp", "(n)_lamba_fener"],
+    ["land", "(v)_(uçak)_inmek_karaya_çıkmak"],
+    ["laptop", "(n)_diz_üstü_bilgisayar"],
+    ["last", "(adv)_son_olarak_son_kez"],
+    ["last", "(n)_son"],
+    ["last", "(v)_sürmek_devam_etmek"],
+    ["later", "(adj)_daha_sonra_en_son"],
+    ["laughter", "(n)_kahkaha"],
+    ["law", "(n)_yasa_kanun_hukuk"],
+    ["lawyer", "(n)_avukat"],
+    ["lazy", "(adj)_tembel_uyuşuk"],
+    ["lead", "(v)_başında_olmak_yol_göstermek_öncülük_etmek"],
+    ["leader", "(n)_önder_lider"],
+    ["learning", "(n)_öğrenme_öğrenim"],
+    ["least", "(adv)_en_az_derece_en_az"],
+    ["least", "(det)_en_az"],
+    ["least", "(pron)_en_az"],
+    ["lecture", "(n)_konferans_ders_öğüt"],
+    ["lecture", "(v)_konferans_vermek_öğüt_vermek"],
+    ["lemon", "(n)_limon"],
+    ["lend", "(v)_ödünç_vermek"],
+    ["less", "(adv)_daha_az"],
+    ["less", "(det)_daha_da_az"],
+    ["less", "(pron)_daha_az"],
+    ["level", "(n)_seviye_düzey"],
+    ["lifestyle", "(n)_yaşam_tarzı"],
+    ["lift", "(n)_asansör_yükselme"],
+    ["lift", "(v)_kaldırmak_aşırmak_yükseltmek"],
+    ["light", "(v)_hafif_açık"],
+    ["likely", "(adj)_muhtemel_olası"],
+    ["link", "(n)_bağlantı_hat"],
+    ["link", "(v)_bağlamak_birleştirmek"],
+    ["listener", "(n)_dinleyici"],
+    ["little", "(adv)_azıcık_az_miktar"],
+    ["lock", "(n)_kilit"],
+    ["lock", "(v)_kilitlemek"],
+    ["look", "(n)_bakış_görünüş"],
+    ["lorry", "(n)_kamyon"],
+    ["lost", "(adj)_kayıp_kaybolmuş_ne_yapacağını_bilmeyen"],
+    ["loud", "(adj)_yüksek_sesli_gürültülü"],
+    ["loud", "(adv)_yüksek_sesle_gürültüyle"],
+    ["loudly", "(adv)_gürültüyle"],
+    ["lovely", "(adj)_hoş_güzel_çekici_sevecen"],
+    ["low", "(adj)_düşük_alçak_az"],
+    ["low", "(adv)_düşük_alçak_aşağıda_aşağıya"],
+    ["luck", "(n)_şans_talih"],
+    ["lucky", "(adj)_şanslı_talihli"],
+
+    ["mail", "(n)_posta"],
+    ["mail", "(v)_postalamak"],
+    ["major", "(adj)_ana_önemli_büyük_başlıca"],
+    ["male", "(adj)_erkek"],
+    ["male", "(n)_erkek"],
+    ["manage", "(v)_yönetmek_başarmak_becermek"],
+    ["manager", "(n)_yönetici_idareci_müdür"],
+    ["manner", "(n)_tarz_biçim_yol_davranış_şekil"],
+    ["mark", "(n)_visne_çürüğü_rengi_kestane_rengi"],
+    ["mark", "(v)_işaretlemek_çizmek_belirlemek_not_vermek"],
+    ["marry", "(v)_evlenmek"],
+    ["material", "(n)_malzeme_madde"],
+    ["mathematics", "(n)_matematik"],
+    ["maths", "(n)_matematik"],
+    ["matter", "(n)_sorun_mesele_madde"],
+    ["matter", "(v)_önemi_olmak_önemli_olmak_olanları_etkilemek"],
+    ["may", "(mv)_mümkün_olmak_izin_vermek_müsaade_etmek_izin_istemek_ricada_bulunmak"],
+    ["media", "(n)_basın_medya"],
+    ["medical", "(adj)_tıbbi_tedaviyle_ilişkin"],
+    ["medicine", "(n)_tıp_ilaç"],
+    ["memory", "(n)_hafıza_anı_hatıra"],
+    ["mention", "(v)_söz_etmek_bahsetmek_dile_getirmek_söylemek"],
+    ["metal", "(n)_metal"],
+    ["method", "(n)_yöntem_usul"],
+    ["middle", "(adj)_ortadaki_orta_ara_vasat"],
+    ["middle", "(n)_orta_orta_kısım"],
+    ["might", "(mv)_olabilir"],
+    ["mind", "(n)_akıl_us_zihin_bellek"],
+    ["mind", "(v)_önemsemek_ilgilenişmek"],
+    ["mine", "(pron)_benimki"],
+    ["mirror", "(n)_ayna"],
+    ["missing", "(adj)_kayıp_eksik"],
+    ["mobile", "(adj)_hareketli_gezici_oynak_seyyar"],
+    ["mobile", "(n)_cep_telefonu"],
+    ["monkey", "(n)_maymun"],
+    ["moon", "(n)_ay_uydu"],
+    ["mostly", "(adv)_çoğunlukla_genelde_başlıca"],
+    ["motorcycle", "(n)_motosiklet"],
+    ["movement", "(n)_hareket_eylem_akım"],
+    ["musical", "(adj)_müzikal_müzikle_ilişkili"],
+    ["musician", "(n)_müzisyen"],
+    ["myself", "(pron)_kendimi_kendime_kendim_bizzat_kendim"],
+
+    
+    ["narrow", "(adj)_dar_kısıtlı_sınırlı"],
+    ["national", "(adj)_ulusal_milli"],
+    ["nature", "(n)_doğa_mizaç_huy"],
+    ["nearly", "(adv)_hemen_hemen_neredeyse"],
+    ["necessary", "(adj)_gerekli_lazım_zorunlu_gereken"],
+    ["neck", "(n)_boyun_yaka"],
+    ["need", "(n)_ihtiyaç_gereksinim"],
+    ["neither", "(det)_(iki_şeyin)_hiç_biri_hiç_birisi"],
+    ["neither", "(pron)_hiç_biri_(ikisinde)_hiç_biri_…in/her_ikisi_de"],
+    ["nervous", "(adj)_sinirli_gergin"],
+    ["network", "(n)_ağ_şebeke_örgü"],
+    ["noise", "(n)_gürültü_ses"],
+    ["noisy", "(adj)_gürültülü"],
+    ["none", "(pron)_hiç_hiçbir"],
+    ["normal", "(adj)_her_zamanki_gibi_normal"],
+    ["normally", "(adv)_normal_olarak_normalde"],
+    ["notice", "(n)_duyuru_uYarı_dikkat"],
+    ["notice", "(v)_fark_etmek_dikkat_etmek_farkına_varmak"],
+    ["novel", "(n)_roman"],
+    ["nowhere", "(adv)_hiçbir_yerde"],
+    ["number", "(v)_numaralandırmak"],
+    ["nut", "(n)_sert_kabuklu_yemiş_fındık_ceviz"],
+    ["ocean", "(n)_okyanus_derya"],
+    ["offer", "(n)_teklif_öneri_sunma"],
+    ["offer", "(v)_teklif_etmek_sunmak"],
+    ["officer", "(n)_memur_görevli_polis_subay"],
+    ["oil", "(n)_sıvı_yağ_petrol"],
+    ["onto", "(prep)_e_a_üzerine_doğru"],
+    ["opportunity", "(n)_fırsat_uygun_durum_şans"],
+    ["option", "(n)_seçenek"],
+    ["ordinary", "(adj)_olağan_sıradan"],
+    ["organization", "(n)_organizasyon_örgüt_örgütlenme"],
+    ["organize", "(v)_planlamak_düzenlemek_kurmak"],
+    ["original", "(adj)_gerçek_asıl_özgün_ilk"],
+    ["ourselves", "(pron)_kendimizi_kendimize"],
+    ["outside", "(adj)_dış_dışarda"],
+    ["outside", "(n)_dışı_dış_yüzeyi"],
+    ["outside", "(prep)_dışarda_dışında"],
+    ["oven", "(n)_fırın"],
+    ["own", "(v)_sahip_olmak"],
+    ["owner", "(n)_sahip_mal_sahibi"],
+
+    ["pack", "(v)_paketlemek_sarmak_toplanmak_doluşmak"],
+    ["pain", "(n)_ağrı_acı_azap"],
+    ["painter", "(n)_ressam"],
+    ["palace", "(n)_palas_saray"],
+    ["pants", "(n)_pantolon"],
+    ["parking", "(n)_araç_park_etme_araç_parking"],
+    ["particular", "(adj)_belli_belirli_özel_özgü_özel"],
+    ["pass", "(v)_geçmek_başarmak"],
+    ["passenger", "(n)_yolcu"],
+    ["past", "(adv)_dan_geçip_giderek_geçe_saat_kullanım_tarihi_geçmiş"],
+    ["patient", "(n)_hasta"],
+    ["pattern", "(n)_örnek_eşantiyon_şablon_tarz_şekil"],
+    ["pay", "(n)_ödeme_maaş"],
+    ["peace", "(n)_barış_sulh_huzur_rahat"],
+    ["penny", "(n)_peni_sent"],
+    ["per", "(prep)_her_biri_başına"],
+    ["per cent", "(adj)_yüzde_lik"],
+    ["per cent", "(adv)_yüzde_yüzdelik_yüzde_olarak"],
+    ["per cent", "(n)_yüzde_oran"],
+    ["perform", "(v)_yapmak_yerine_getirmek_uygulamak_sergilemek"],
+    ["perhaps", "(adv)_belki_muhtemelen"],
+    ["permission", "(n)_izin_müsaade"],
+    ["personality", "(n)_kişilik_karakter"],
+    ["pet", "(n)_ev_hayvanı_evcil_hayvan"],
+    ["petrol", "(n)_benzin"],
+    ["photograph", "(v)_fotoğraf_çekmek"],
+    ["physical", "(adj)_fiziki_bedensel"],
+    ["physics", "(n)_fizik"],
+    ["pick", "(v)_toplamak_koparmak_yolmak_seçmek"],
+    ["pilot", "(n)_pilot"],
+    ["planet", "(n)_gezegen"],
+    ["plant", "(v)_dikmek_yerleştirmek"],
+    ["plastic", "(adj)_plastik"],
+    ["plastic", "(n)_plastik"],
+    ["plate", "(n)_tabak_levha"],
+    ["platform", "(n)_sahne_platform"],
+    ["please", "(v)_memnun_etmek"],
+    ["pleased", "(adj)_mutlu_memnun"],
+    ["pocket", "(n)_cep_göz_kısım"],
+    ["polite", "(adj)_kibar_nazik_terbiyeli_ince"],
+    ["pollution", "(n)_kirlenme_kirletme_kirlilik"],
+    ["pop", "(adj)_pop"],
+    ["pop", "(n)_pop_müziği"],
+    ["population", "(n)_nüfus"],
+    ["position", "(n)_durum_konum_yer"],
+    ["possession", "(n)_mal_mülk_sahip_olma"],
+    ["possibility", "(n)_olasılık_ihtimal_olanak"],
+    ["poster", "(n)_afiş"],
+    ["power", "(n)_güç_kuvvet_yetki_iktidar"],
+    ["predict", "(v)_önceden_haber_vermek_tahmin_etmek"],
+    ["present", "(v)_sunmak_vermek"],
+    ["president", "(n)_başkan_cumhurbaşkanı"],
+    ["prevent", "(v)_önlemek_engel_olmak_alıkoymak"],
+    ["print", "(v)_basmak_yayımlamak"],
+    ["printer", "(n)_yazıcı_matbaacı"],
+    ["prison", "(n)_hapishane_cezaevi_kodes"],
+    ["prize", "(n)_ödül_mükâfat_ikramiye"],
+    ["process", "(n)_yöntem_ișlem_süreç"],
+    ["produce", "(v)_üretmek_yapmak_neden_olmak"],
+    ["professional", "(adj)_mesleki_profesyonel"],
+    ["professor", "(n)_profesör"],
+    ["profile", "(n)_profil_biyografi_yüzün_yandan_görünüşü_kesit"],
+    ["program", "(n)_program"],
+    ["progress", "(n)_gelişme_ilerleme"],
+    ["promise", "(n)_söz_ vaat_gelecek"],
+    ["promise", "(v)_söz_vermek_vaaetmek"],
+    ["pronounce", "(v)_telâffuz_etmek_sesletmek"],
+    ["protect", "(v)_korumak_gözetmek"],
+    ["provide", "(v)_sağlamak_karşılama_temin_etmek"],
+    ["pub", "(n)_meyhane_bar"],
+    ["public", "(adj)_umumi_ortak"],
+    ["public", "(n)_kamu_kamusal_halk"],
+    ["publish", "(v)_yayınlamak_basmak"],
+    ["pull", "(v)_çekmek_asılmak"],
+    ["purpose", "(n)_amaç_maksat_niyet"],
+    ["push", "(v)_itmek_zorlamak"],
+
+
+    ["quality", "(n)_nitelik_kalite_vasıf_özellik"],
+    ["quantity", "(n)_nicelik_miktar_sayı"],
+    ["queen", "(n)_kraliçe_sultan_sevgili"],
+    ["question", "(v)_sorgulamak_şüphe_etmek"],
+    ["quietly", "(adv)_sessizce"],
+    ["race", "(n)_yarış_koşu_ırk"],
+    ["race", "(v)_yarışmak"],
+    ["railway", "(n)_demiryolu"],
+    ["raise", "(v)_yükseltmek_büyütmek"],
+    ["rate", "(n)_oran_kur_rayiç_ücret_fiyat"],
+    ["rather", "(adv)_oldukça_biraz_az_çok"],
+    ["reach", "(v)_ulaşmak_erişmek"],
+    ["react", "(v)_tepki_göstermek_tepki_vermek_tepkimek"],
+    ["realize", "(v)_fark_etmek_farkına_varmak"],
+    ["receive", "(v)_almak_teslim_almak_kabul_etmek"],
+    ["recent", "(adj)_son_zamanlardaki_yeni_son_son_günlerdeki"],
+    ["recently", "(adv)_son_zamanlarda_geçenlerde"],
+    ["reception", "(n)_alma_kabul_resepsiyon"],
+    ["recipe", "(n)_yemek_tarifi"],
+    ["recognize", "(v)_tanımak_kabul_etmek_farkına_varmak"],
+    ["recommend", "(v)_tavsiye_etmek_önermek"],
+    ["record", "(n)_kayıt_rekor_kaset"],
+    ["record", "(v)_kaydetmek"],
+    ["recording", "(n)_kayıt_etme"],
+    ["recycle", "(v)_geri_dönüştürmek"],
+    ["reduce", "(v)_azaltmak_indirmek_küçültmek"],
+    ["refer", "(v)_atıfta_bulunmak_kastetmek_ima_etmek"],
+    ["refuse", "(v)_reddetmek_kabul_etmemek"],
+    ["region", "(n)_bölge_yöre"],
+    ["regular", "(adj)_düzenli"],
+    ["relationship", "(n)_ilişki_ilgi_bağ"],
+    ["remove", "(v)_ortadan_kaldırmak_çıkarmak"],
+    ["repair", "(v)_onarmak_tamir_etmek"],
+    ["replace", "(v)_değiştirmek_yerine_koymak"],
+    ["reply", "(n)_cevap_yanıt"],
+    ["reply", "(v)_cevap_vermek"],
+    ["report", "(v)_rapor_etmek_anlatmak_söylemek_bildirmek"],
+    ["reporter", "(n)_gazete_muhabiri_sunucu"],
+    ["request", "(n)_rica_istek"],
+    ["research", "(n)_araştırma"],
+    ["research", "(v)_araştırmak_incelemek"],
+    ["researcher", "(n)_araştırmacı"],
+    ["respond", "(v)_cevap_vermek_yanıt_tepki_vermek"],
+    ["response", "(n)_cevap_yanıt_tepki"],
+    ["rest", "(n)_dinlenme_istirahat_kalan_arta_kalan"],
+    ["rest", "(v)_dinlenmek_mola_vermek"],
+    ["review", "(n)_gözden_geçirme_eleştirme"],
+    ["review", "(v)_incelemek_gözden_geçirmek_eleştirmek"],
+    ["ride", "(n)_binme_sürme"],
+    ["ring", "(n)_yüzük_zil"],
+    ["ring", "(v)_zil_çalmak_çınlatmak_telefon_etmek"],
+    ["rise", "(v)_artmak_yükselmek_kalkmak_doğmak_oraya_çıkmak"],
+    ["rock", "(n)_kaya_taş"],
+    ["role", "(n)_rol_görev"],
+    ["roof", "(n)_çatı_tavan"],
+    ["round", "(adj)_yuvarlak_daire_şeklinde_küresel"],
+    ["round", "(adv)_yuvarlak"],
+    ["round", "(prep)_çevresinde_etrafında"],
+    ["route", "(n)_rota_yol_hat_güzergah"],
+    ["rubbish", "(n)_çöp_saçmalık"],
+    ["rude", "(adj)_kaba"],
+    ["run", "(n)_koşu"],
+    ["runner", "(n)_koşucu"],
+    ["running", "(n)_koşu"],
+
+
+    ["sadly", "(adv)_üzüntülü_bir_şekilde"],
+    ["safe", "(adj)_güvenli"],
+    ["sail", "(v)_gemiyle_yol_almak"],
+    ["sailing", "(n)_denize_açılma_yelkencilik"],
+    ["salary", "(n)_maaş_aylık"],
+    ["sale", "(n)_satış_indirim_ucuzluk"],
+    ["sauce", "(n)_sos_salça"],
+    ["save", "(v)_kurtarmak_saklamak_biriktirmek_tasarruf"],
+    ["scared", "(adj)_korkmuş_tedirgin"],
+    ["scary", "(adj)_korkutucu"],
+    ["scene", "(n)_sahne_manzara_olay_yeri"],
+    ["schedule", "(n)_tarife_şift_program"],
+    ["score", "(n)_sonuç_puan_sayı"],
+    ["score", "(v)_sayı_yapmak_gol_atmak_puan_almak"],
+    ["screen", "(n)_ekran_perde"],
+    ["search", "(n)_arama"],
+    ["search", "(v)_aramak"],
+    ["season", "(n)_mevsim"],
+    ["seat", "(n)_koltuk_sandalye_oturacak_yer"],
+    ["second", "(adv)_ikinci"],
+    ["secondly", "(adv)_ikinci_olarak"],
+    ["secret", "(adj)_gizli"],
+    ["secret", "(n)_sır"],
+    ["secretary", "(n)_sekreter"],
+    ["seem", "(lv)_gibi_görünmek_benzemek"],
+    ["sense", "(n)_duyu_anlam"],
+    ["separate", "(adj)_ayrı_ayrılmış"],
+    ["series", "(n)_sıra_seri_dizi"],
+    ["serious", "(adj)_ciddi_ağırbaşlı"],
+    ["serve", "(v)_hizmet_etmek"],
+    ["service", "(n)_servis_hizmet_görev"],
+    ["several", "(det)_birkaç"],
+    ["several", "(pron)_birkaç"],
+    ["shake", "(v)_sallamak_çalkalamak"],
+    ["shall", "(mv)_…yım/lım_mı?"],
+    ["shape", "(n)_şekil_biçim"],
+    ["sheet", "(n)_çarşaf_sayfa_tabaka"],
+    ["ship", "(n)_gemi"],
+    ["shoulder", "(n)_omuz"],
+    ["shout", "(n)_çığlık_bağırış"],
+    ["shout", "(v)_bağırmak_haykırmak"],
+    ["shut", "(adj)_kapalı"],
+    ["shut", "(v)_kapatmak_kapamak"],
+    ["side", "(n)_yüz_taraf_yan"],
+    ["sign", "(n)_imza_işaret"],
+    ["sign", "(v)_imzalamak"],
+    ["silver", "(adj)_gümüşten_yapılmış_gümüş_renginde"],
+    ["silver", "(n)_gümüş"],
+    ["simple", "(adj)_basit_yalın"],
+    ["since", "(conj)_–dığı_için_çünkü_–den_beri"],
+    ["since", "(prep)_–den_beri_–den_itibaren"],
+    ["singing", "(n)_şarkı_söyleme"],
+    ["single", "(adj)_tek_bekâr"],
+    ["single", "(n)_tek_bekâr"],
+    ["sir", "(n)_bey_efendi_efendim"],
+    ["site", "(n)_yer_alan"],
+    ["size", "(n)_beden_numara_büyüklük_boyut"],
+    ["ski", "(adj)_kayak_ile_ilgili"],
+    ["ski", "(n)_kayak"],
+    ["ski", "(v)_kayak_yapmak"],
+    ["skiing", "(n)_kayak_yapma"],
+    ["skin", "(n)_cilt_deri"],
+    ["sky", "(n)_gökyüzü"],
+    ["sleep", "(n)_uyku"],
+    ["slowly", "(adv)_yavaş_yavaş_yavaşça_yavaş"],
+    ["smartphone", "(n)_akıllı_telefon"],
+    ["smell", "(n)_koku_koklama"],
+    ["smell", "(v)_koklamak_kokmak"],
+    ["smile", "(n)_gülümseme"],
+    ["smile", "(v)_gülümsemek"],
+    ["smoke", "(n)_duman_sigara"],
+    ["smoke", "(v)_sigara_içmek_tütmek"],
+    ["smoking", "(n)_sigara_içme"],
+    ["soap", "(n)_sabun"],
+    ["soccer", "(n)_futbol"],
+    ["social", "(adj)_toplumsal"],
+    ["society", "(n)_toplum_cemiyet"],
+    ["sock", "(n)_çorap"],
+    ["soft", "(adj)_yumuşak_hafif"],
+    ["soldier", "(n)_asker"],
+    ["solution", "(n)_çıkar_yol_eryik_çözüm"],
+    ["solve", "(v)_çözmek_çözüm_bulmak"],
+    ["somewhere", "(adv)_bir_yerde_herhangi_bir_yerde"],
+    ["somewhere", "(pron)_bir_yer"],
+    ["sort", "(n)_tür_çeşit_sınıf"],
+    ["source", "(n)_kaynak_kaynakça_memba_köken"],
+    ["speaker", "(n)_konuşmacı_hoparlör"],
+    ["specific", "(adj)_spesifik_özel_belli_belirli"],
+    ["speech", "(n)_konuşma_söz"],
+    ["speed", "(n)_hız_limiti_azami_sürat"],
+    ["spider", "(n)_örümcek"],
+    ["spoon", "(n)_kaşık"],
+    ["square", "(adj)_kare"],
+    ["square", "(n)_kare_meydan"],
+    ["stage", "(n)_sahne_aşama"],
+    ["stair", "(n)_basamak_kademe"],
+    ["stamp", "(n)_pul_damga"],
+    ["star", "(v)_başrol_oynamak_yıldızı_parlamak"],
+    ["start", "(n)_başlamak"],
+    ["state", "(n)_durum_vaziyet_hâl_eyalet_devlet"],
+    ["stay", "(n)_kalma_ziyaret"],
+    ["steal", "(v)_çalmak_aşırmak"],
+    ["step", "(n)_adım_basamak"],
+    ["stomach", "(n)_mide_karın"],
+    ["stone", "(n)_taş"],
+    ["store", "(n)_dükkân_depo"],
+    ["storm", "(n)_fırtına"],
+    ["straight", "(adj)_düz_doğru_dosdoğru_dürüst"],
+    ["straight", "(adv)_düz_doğru_dümdüz"],
+    ["strange", "(adj)_tuhaf_acayip_yabancı"],
+    ["strategy", "(n)_strateji_taktik_savaş_bilimi"],
+    ["stress", "(n)_gerilim_stres_vurgu"],
+    ["stress", "(v)_vurgulamak"],
+    ["structure", "(n)_yapı_bünye_bina"],
+    ["stupid", "(adj)_aptal_saçma"],
+    ["succeed", "(v)_başarmak_başarılı_olmak"],
+    ["successful", "(adj)_başarılı"],
+    ["such", "(det)_böyle_bu_gibi_bunun_gibi"],
+    ["such", "(pron)_böyle_bu_gibi_bunun_gibi"],
+    ["suddenly", "(adv)_aniden"],
+    ["suggest", "(v)_önermek_ileri_sürmek"],
+    ["suggestion", "(n)_öneri"],
+    ["suit", "(n)_takım_elbise"],
+    ["support", "(n)_destek"],
+    ["support", "(v)_tutmak_desteklemek"],
+    ["suppose", "(v)_farz_etmek_varsaymak_sanmak"],
+    ["sure", "(adv)_elbette_tabii"],
+    ["surprise", "(n)_sürpriz_şaşkınlık"],
+    ["surprise", "(v)_sürpriz_yapmak_şaşırtmak"],
+    ["surprised", "(adj)_şaşırmış"],
+    ["surprising", "(adj)_şaşırtıcı_hayret_verici"],
+    ["survey", "(n)_anket"],
+    ["sweet", "(adj)_tatlı_şekerli_sevimli"],
+    ["sweet", "(n)_şekerleme"],
+    ["symbol", "(n)_işaret_sembol"],
+    ["system", "(n)_yöntem_düzen_düzenek"],
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+        ];
+
+        let shuffledWords = shuffleArray([...words]);
+        let currentWordIndex = 0;
+        let trueScore = 0;
+        let falseScore = 0;
+        let isFlashCardMode = false;
+        let isFrontSide = true; // Track the state of the flashcard
+        const incorrectWords = new Set(); // To store incorrect words
+
+        const quizContainer = document.getElementById('quiz-container');
+        const flashcardContainer = document.getElementById('flashcard-container');
+        const switchModeButton = document.getElementById('switch-mode');
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const highlightedWordEl = document.getElementById('highlighted-word');
+        const flashcardEl = document.getElementById('flashcard');
+        const quizTrueScoreEl = document.getElementById('quiz-true-score');
+        const quizFalseScoreEl = document.getElementById('quiz-false-score');
+        const flashTrueScoreEl = document.getElementById('flash-true-score');
+        const flashFalseScoreEl = document.getElementById('flash-false-score');
+        const markTrueButton = document.getElementById('mark-true');
+        const markFalseButton = document.getElementById('mark-false');
+        const nextCardButton = document.getElementById('next-card');
+        const incorrectWordsEl = document.querySelectorAll('#incorrect-words');
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function setupQuiz() {
+            const [englishWord, correctTurkishWord] = shuffledWords[currentWordIndex];
+
+            questionEl.textContent = `What is the Turkish word for "${englishWord}"?`;
+            highlightedWordEl.textContent = englishWord;
+
+            const options = shuffleArray(
+                shuffledWords
+                    .map(word => word[1])
+                    .filter(turkish => turkish !== correctTurkishWord)
+                    .slice(0, 3)
+                    .concat(correctTurkishWord)
+            );
+
+            optionsEl.innerHTML = '';
+
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add('option');
+                button.addEventListener('click', () => checkAnswer(option));
+                optionsEl.appendChild(button);
+            });
+
+            updateScore();
+        }
+
+        function checkAnswer(selectedAnswer) {
+            const [englishWord, correctTurkishWord] = shuffledWords[currentWordIndex];
+            if (selectedAnswer === correctTurkishWord) {
+                trueScore++;
+            } else {
+                falseScore++;
+                incorrectWords.add(englishWord);
+                updateIncorrectWords();
+            }
+            nextWord();
+        }
+
+        function setupFlashcard() {
+            const [englishWord, correctTurkishWord] = shuffledWords[currentWordIndex];
+            flashcardEl.textContent = englishWord;
+            flashcardEl.dataset.answer = correctTurkishWord;
+            isFrontSide = true; // Reset to front side when loading a new card
+        }
+
+        flashcardEl.addEventListener('click', () => {
+            const [englishWord, correctTurkishWord] = shuffledWords[currentWordIndex];
+            if (isFrontSide) {
+                flashcardEl.innerHTML = correctTurkishWord.split('_').join('<br>');
+            } else {
+                flashcardEl.textContent = englishWord;
+            }
+            isFrontSide = !isFrontSide; // Toggle the side
+        });
+
+        markTrueButton.addEventListener('click', () => {
+            trueScore++;
+            updateScore();
+            nextWord();
+        });
+
+        markFalseButton.addEventListener('click', () => {
+            const [englishWord] = shuffledWords[currentWordIndex];
+            falseScore++;
+            incorrectWords.add(englishWord);
+            updateIncorrectWords();
+            updateScore();
+            nextWord();
+        });
+
+        nextCardButton.addEventListener('click', nextWord);
+
+        function nextWord() {
+            currentWordIndex = (currentWordIndex + 1) % shuffledWords.length;
+            if (isFlashCardMode) {
+                setupFlashcard();
+            } else {
+                setupQuiz();
+            }
+        }
+
+        function updateScore() {
+            quizTrueScoreEl.textContent = `True: ${trueScore}`;
+            quizFalseScoreEl.textContent = `False: ${falseScore}`;
+            flashTrueScoreEl.textContent = `True: ${trueScore}`;
+            flashFalseScoreEl.textContent = `False: ${falseScore}`;
+        }
+
+        function updateIncorrectWords() {
+            incorrectWordsEl.forEach(element => {
+                element.innerHTML = Array.from(incorrectWords).join('<br>');
+            });
+        }
+
+        switchModeButton.addEventListener('click', () => {
+            isFlashCardMode = !isFlashCardMode;
+            if (isFlashCardMode) {
+                quizContainer.classList.add('hidden');
+                flashcardContainer.classList.remove('hidden');
+                setupFlashcard();
+                switchModeButton.textContent = 'Switch to Quiz Mode';
+            } else {
+                flashcardContainer.classList.add('hidden');
+                quizContainer.classList.remove('hidden');
+                setupQuiz();
+                switchModeButton.textContent = 'Switch to Flash Card Mode';
+            }
+            updateScore();
+            updateIncorrectWords();
+        });
+
+        setupQuiz();
+    </script>
+</body>
+</html>
