@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İngilizce Kelime Kartları</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            width: 500px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-align: center;
+            border: 2px solid #000;
+        }
+
+        /* Üst Menü Butonları */
+        .top-menu {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .menu-btn {
+            background: white;
+            border: 2px solid black;
+            border-radius: 15px;
+            padding: 5px 15px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Sayı Navigasyonu (1, 10, 20...) */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-num {
+            border: none;
+            background: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px;
+            color: #333;
+        }
+
+        .nav-num:hover {
+            text-decoration: underline;
+        }
+
+        /* Mavi aktif durumu */
+        .nav-num.active {
+            color: #007bff;
+            font-size: 16px;
+            border-bottom: 2px solid #007bff;
+        }
+
+        /* Resim Alanı */
+        .image-box {
+            width: 100%;
+            height: 300px;
+            border: 4px solid black;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #eee;
+            overflow: hidden;
+        }
+
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Kelime ve Cümle Alanı (Tıklanabilir) */
+        .content-area {
+            cursor: pointer;
+            user-select: none; /* Metin seçimini engeller, buton hissi verir */
+            transition: transform 0.1s;
+        }
+
+        .content-area:active {
+            transform: scale(0.98);
+        }
+
+        .word-box {
+            border: 3px solid black;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: white;
+        }
+
+        .word-box h2 {
+            margin: 0;
+            font-size: 28px;
+            color: #000;
+        }
+
+        .sentence-box {
+            border: 3px solid black;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: white;
+            text-align: left;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        .sentence {
+            margin-bottom: 10px;
+        }
+        
+        .sentence:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Alt Kontrol Butonları */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 0 20px;
+        }
+
+        .ctrl-btn {
+            background: white;
+            border: 3px solid black;
+            border-radius: 10px;
+            padding: 10px 25px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .ctrl-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Türkçe/İngilizce Renk Ayrımı (Opsiyonel görsel ipucu) */
+        .tr-mode .word-box h2 {
+            color: #d9534f; /* Türkçe modunda başlık hafif kırmızımsı */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="top-menu">
+        <button class="menu-btn">MENU 1</button>
+        <button class="menu-btn">MENU 2</button>
+        <button class="menu-btn">MENU 3</button>
+        <button class="menu-btn">MODE</button>
+    </div>
+
+    <div class="nav-bar" id="navBar">
+        </div>
+
+    <div class="image-box">
+        <img id="mainImage" src="" alt="Vocabulary Image">
+    </div>
+
+    <div id="cardArea" class="content-area" onclick="toggleLanguage()">
+        <div class="word-box">
+            <h2 id="wordText">Loading...</h2>
+        </div>
+
+        <div class="sentence-box">
+            <div class="sentence" id="sentence1">Loading...</div>
+            <div class="sentence" id="sentence2">Loading...</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="ctrl-btn" onclick="prevWord()">BACK</button>
+        <button class="ctrl-btn" onclick="randomWord()">RAND</button>
+        <button class="ctrl-btn" onclick="nextWord()">NEXT</button>
+    </div>
+</div>
+
+<script>
+    // --- VERİ LİSTESİ ---
+    // Buraya 100 kelimeye kadar ekleme yapabilirsiniz.
+    const vocabularyList = [
+        {
+            id: 1,
+            wordEn: "Fracture",
+            wordTr: "Çatlak, Kırık",
+            sentencesEn: [
+                "The X-ray showed a small fracture in his left arm.",
+                "The earthquake caused fractures in several buildings."
+            ],
+            sentencesTr: [
+                "Röntgen, sol kolunda küçük bir kırık gösterdi.",
+                "Deprem birçok binada çatlaklara neden oldu."
+            ],
+            image: "https://ihsancetin.com.tr/ydsFile/img1/image1.JPG"
+        },
+        {
+            id: 2,
+            wordEn: "Hypothesis",
+            wordTr: "Hipotez, Varsayım",
+            sentencesEn: [
+                "The scientist tested her hypothesis through several experiments.",
+                "My hypothesis is that the machine failed because of overheating."
+            ],
+            sentencesTr: [
+                "Bilim insanı hipotezini birkaç deneyle test etti.",
+                "Benim varsayımım, makinenin aşırı ısınma nedeniyle arızalandığı yönünde."
+            ],
+            image: "https://ihsancetin.com.tr/ydsFile/img1/image2.JPG"
+        },
+        {
+            id: 3,
+            wordEn: "Derive",
+            wordTr: "Türetmek, Elde etmek",
+            sentencesEn: [
+                "We can derive this formula by using basic algebra.",
+                "Many English words are derived from Latin."
+            ],
+            sentencesTr: [
+                "Bu formülü temel cebir kullanarak türetebiliriz.",
+                "Birçok İngilizce kelime Latince’den türetilmiştir."
+            ],
+            image: "https://ihsancetin.com.tr/ydsFile/img1/image3.JPG"
+        },
+        {
+            id: 4,
+            wordEn: "Magnitude",
+            wordTr: "Büyüklük, Önem",
+            sentencesEn: [
+                "The magnitude of the problem was greater than we expected.",
+                "The earthquake had a magnitude of 6.2."
+            ],
+            sentencesTr: [
+                "Sorunun büyüklüğü beklediğimizden daha fazlaydı.",
+                "Depremin büyüklüğü 6.2 idi."
+            ],
+            image: "https://ihsancetin.com.tr/ydsFile/img1/image4.JPG"
+        },
+        {
+            id: 5,
+            wordEn: "Integrate",
+            wordTr: "Bütünleştirmek, Birleştirmek",
+            sentencesEn: [
+                "We need to integrate this new software into our system.",
+                "The teacher tried to integrate real-life examples into the lesson."
+            ],
+            sentencesTr: [
+                "Bu yeni yazılımı sistemimize entegre etmemiz gerekiyor.",
+                "Öğretmen, derse gerçek hayat örneklerini dahil etmeye çalıştı."
+            ],
+            image: "https://ihsancetin.com.tr/ydsFile/img1/image5.JPG"
+        },
+        {
+            id: 6,
+            wordEn: "Disperse",
+            wordTr: "Dağıtmak, Yaymak",
+            sentencesEn: [
+                "The police used water spray to disperse the crowd.",
+                "The seeds disperse easily in the wind."
+            ],
+            sentencesTr: [
+                "Polis kalabalığı dağıtmak için su spreyi kullandı.",
+                "Tohumlar rüzgârda kolayca yayılır."
+            ],
+            image: "https://ihsancetin.com.tr/ydsFile/img1/image6.JPG"
+        },
+        {
+            id: 7,
+            wordEn: "Correlate",
+            wordTr: "İlişkilendirmek",
+            sentencesEn: [
+                "The study shows that stress levels correlate with poor sleep quality.",
+                "The data does not correlate with our initial results."
+            ],
+            sentencesTr: [
+                "Araştırma, stres seviyelerinin kötü uyku kalitesiyle ilişkili olduğunu gösteriyor.",
+                "Veriler, ilk sonuçlarımızla ilişkilendirilmiyor."
+            ],
+            image: "https://ihsancetin.com.tr/ydsFile/img1/image7.JPG"
+        },
+        {
+            id: 8,
+            wordEn: "Precede",
+            wordTr: "Önce gelmek, Öncel olmak",
+            sentencesEn: [
+                "A warm-up session should precede the main workout.",
+                "His reputation precedes him."
+            ],
+            sentencesTr: [
+                "Isınma seansı ana antrenmandan önce gelmelidir.",
+                "Onun ünü kendisinden önce gelir."
+            ],
+            image: "https://ihsancetin.com.tr/ydsFile/img1/image8.JPG"
+        },
+        {
+            id: 9,
+            wordEn: "Subsequent",
+            wordTr: "Sonraki, Takip eden",
+            sentencesEn: [
+                "The subsequent tests confirmed the initial diagnosis.",
+                "We will discuss this in subsequent meetings."
+            ],
+            sentencesTr: [
+                "Sonraki testler ilk teşhisi doğruladı.",
+                "Bunu sonraki toplantılarda konuşacağız."
+            ],
+            image: "https://ihsancetin.com.tr/ydsFile/img1/image9.JPG"
+        },
+        {
+            id: 10,
+            wordEn: "Adjacent",
+            wordTr: "Bitişik, Komşu",
+            sentencesEn: [
+                "The two classrooms are adjacent to each other.",
+                "The park is adjacent to the shopping mall."
+            ],
+            sentencesTr: [
+                "İki sınıf birbirine bitişiktir.",
+                "Park alışveriş merkezine bitişiktir."
+            ],
+            image: "https://ihsancetin.com.tr/ydsFile/img1/image10.JPG"
+        },
+
+
+{
+    id: 11,
+    wordEn: "Elaborate",
+    wordTr: "Detaylandırmak, Ayrıntılı",
+    sentencesEn: [
+        "Could you elaborate on your idea so we can understand it better?",
+        "The report provides an elaborate analysis of the data."
+    ],
+    sentencesTr: [
+        "Daha iyi anlayabilmemiz için fikrini detaylandırabilir misin?",
+        "Rapor, verilerin ayrıntılı bir analizini sunuyor."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image11.JPG"
+},
+{
+    id: 12,
+    wordEn: "Mitigate",
+    wordTr: "Hafifletmek, Azaltmak",
+    sentencesEn: [
+        "We installed filters to mitigate air pollution in the factory.",
+        "Proper planning can mitigate the risks of the project."
+    ],
+    sentencesTr: [
+        "Fabrikadaki hava kirliliğini azaltmak için filtreler kurduk.",
+        "Doğru planlama, projenin risklerini hafifletebilir."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image12.JPG"
+},
+{
+    id: 13,
+    wordEn: "Converge",
+    wordTr: "Yakınsamak, Birleşmek",
+    sentencesEn: [
+        "All the participants converged at the main hall for the meeting.",
+        "The two theories converge at several key points."
+    ],
+    sentencesTr: [
+        "Tüm katılımcılar toplantı için ana salonda birleşti.",
+        "İki teori birkaç önemli noktada yakınsıyor."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image13.JPG"
+},
+{
+    id: 14,
+    wordEn: "Diverge",
+    wordTr: "Iraksamak, Ayrılmak",
+    sentencesEn: [
+        "The road diverges into two paths after the bridge.",
+        "Their opinions began to diverge as the discussion continued."
+    ],
+    sentencesTr: [
+        "Köprüden sonra yol iki patikaya ayrılıyor.",
+        "Tartışma devam ettikçe görüşleri ayrılmaya başladı."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image14.JPG"
+},
+{
+    id: 15,
+    wordEn: "Constrain",
+    wordTr: "Kısıtlamak, Zorlamak",
+    sentencesEn: [
+        "Budget limits constrain our ability to upgrade the equipment.",
+        "He felt constrained by the strict rules of the organization."
+    ],
+    sentencesTr: [
+        "Bütçe sınırları, ekipmanları yükseltme imkanımızı kısıtlıyor.",
+        "Kendini kurumun katı kuralları tarafından zorlanmış hissetti."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image15.JPG"
+},
+{
+    id: 16,
+    wordEn: "Pervasive",
+    wordTr: "Yaygın, Nüfuz eden",
+    sentencesEn: [
+        "Smartphone usage is pervasive in modern society.",
+        "A pervasive sense of fear spread through the city."
+    ],
+    sentencesTr: [
+        "Akıllı telefon kullanımı modern toplumda yaygındır.",
+        "Şehirde yaygın bir korku hissi yayıldı."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image16.JPG"
+},
+{
+    id: 17,
+    wordEn: "Undergo",
+    wordTr: "Geçirmek, Yaşamak, Maruz kalmak",
+    sentencesEn: [
+        "The building will undergo major renovations next year.",
+        "She had to undergo surgery after the accident."
+    ],
+    sentencesTr: [
+        "Bina gelecek yıl büyük bir tadilattan geçecek.",
+        "Kaza sonrası ameliyat geçirmek zorunda kaldı."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image17.JPG"
+},
+{
+    id: 18,
+    wordEn: "Susceptible",
+    wordTr: "Hassas, Duyarlı, Savunmasız",
+    sentencesEn: [
+        "Children are more susceptible to certain illnesses.",
+        "The device is susceptible to damage from high temperatures."
+    ],
+    sentencesTr: [
+        "Çocuklar bazı hastalıklara karşı daha hassastır.",
+        "Cihaz yüksek sıcaklıklardan kaynaklanan hasara karşı savunmasızdır."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image18.JPG"
+},
+{
+    id: 19,
+    wordEn: "Fluctuate",
+    wordTr: "Dalgalanmak, İnip çıkmak",
+    sentencesEn: [
+        "Prices of food products fluctuate during the holiday season.",
+        "Her mood tends to fluctuate depending on the weather."
+    ],
+    sentencesTr: [
+        "Gıda ürünlerinin fiyatları tatil sezonunda dalgalanır.",
+        "Havası genellikle hava durumuna bağlı olarak dalgalanır."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image19.JPG"
+},
+
+{
+    id: 20,
+    wordEn: "Emit",
+    wordTr: "Yaymak, Salmak (ışık, ısı vb.)",
+    sentencesEn: [
+        "The lamp emits a soft, warm light.",
+        "Volcanoes can emit large amounts of gas and ash."
+    ],
+    sentencesTr: [
+        "Lamba yumuşak ve sıcak bir ışık yayar.",
+        "Volkanlar büyük miktarda gaz ve kül salabilir."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image20.JPG"
+},
+{
+    id: 21,
+    wordEn: "Absorb",
+    wordTr: "Emmek, Soğurmak",
+    sentencesEn: [
+        "The sponge can absorb a lot of water.",
+        "Dark colors absorb more heat from the sun."
+    ],
+    sentencesTr: [
+        "Sünger çok miktarda su emebilir.",
+        "Koyu renkler güneşten daha fazla ısı soğurur."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image21.JPG"
+},
+{
+    id: 22,
+    wordEn: "Retain",
+    wordTr: "Tutmak, Muhafaza etmek",
+    sentencesEn: [
+        "The soil retains moisture after the rain.",
+        "It’s difficult to retain all the information from the lecture."
+    ],
+    sentencesTr: [
+        "Toprak yağmurdan sonra nemi muhafaza eder.",
+        "Dersteki tüm bilgileri akılda tutmak zordur."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image22.JPG"
+},
+{
+    id: 23,
+    wordEn: "Compile",
+    wordTr: "Derlemek, Toplamak",
+    sentencesEn: [
+        "The researcher compiled data from several studies.",
+        "We need to compile all the documents before the meeting."
+    ],
+    sentencesTr: [
+        "Araştırmacı birkaç çalışmadan veri derledi.",
+        "Toplantıdan önce tüm belgeleri toplamamız gerekiyor."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image23.JPG"
+},
+{
+    id: 24,
+    wordEn: "Validate",
+    wordTr: "Doğrulamak, Geçerli kılmak",
+    sentencesEn: [
+        "The results were validated through repeated experiments.",
+        "You must validate your ticket before entering the station."
+    ],
+    sentencesTr: [
+        "Sonuçlar tekrar edilen deneylerle doğrulandı.",
+        "İstasyona girmeden önce biletinizi doğrulamalısınız."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image24.JPG"
+},
+{
+    id: 25,
+    wordEn: "Refute",
+    wordTr: "Çürütmek, Yalanlamak",
+    sentencesEn: [
+        "Scientists refuted the claim with strong evidence.",
+        "He tried to refute the accusations made against him."
+    ],
+    sentencesTr: [
+        "Bilim insanları iddiayı güçlü kanıtlarla çürüttü.",
+        "Kendisine yöneltilen suçlamaları yalanlamaya çalıştı."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image25.JPG"
+},
+{
+    id: 26,
+    wordEn: "Allocate",
+    wordTr: "Tahsis etmek, Ayırmak",
+    sentencesEn: [
+        "The company allocated more funds for research.",
+        "Each student was allocated a specific task."
+    ],
+    sentencesTr: [
+        "Şirket araştırma için daha fazla fon tahsis etti.",
+        "Her öğrenciye belirli bir görev ayrıldı."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image26.JPG"
+},
+{
+    id: 27,
+    wordEn: "Substrate",
+    wordTr: "Yüzey, Temel madde",
+    sentencesEn: [
+        "Bacteria grow on a nutrient-rich substrate.",
+        "The paint adheres better when the substrate is clean."
+    ],
+    sentencesTr: [
+        "Bakteriler besin açısından zengin bir yüzeyde büyür.",
+        "Alt yüzey temiz olduğunda boya daha iyi yapışır."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image27.JPG"
+},
+{
+    id: 28,
+    wordEn: "Catalyst",
+    wordTr: "Katalizör, Hızlandırıcı",
+    sentencesEn: [
+        "A catalyst speeds up chemical reactions without being consumed.",
+        "Her speech was the catalyst for major changes in the company."
+    ],
+    sentencesTr: [
+        "Bir katalizör, tüketilmeden kimyasal reaksiyonları hızlandırır.",
+        "Onun konuşması şirkette büyük değişikliklerin hızlandırıcısı oldu."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image28.JPG"
+},
+{
+    id: 29,
+    wordEn: "Aggregate",
+    wordTr: "Toplam, Küme, Birleştirmek",
+    sentencesEn: [
+        "The aggregate value of the assets increased this year.",
+        "These small particles aggregate to form larger structures."
+    ],
+    sentencesTr: [
+        "Varlıkların toplam değeri bu yıl arttı.",
+        "Bu küçük parçacıklar birleşerek daha büyük yapılar oluşturur."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image29.JPG"
+},
+{
+    id: 30,
+    wordEn: "Inherent",
+    wordTr: "Doğuştan gelen",
+    sentencesEn: [
+        "Risk is an inherent part of any scientific experiment.",
+        "Every material has inherent limitations."
+    ],
+    sentencesTr: [
+        "Risk, her bilimsel deneyin doğuştan gelen bir parçasıdır.",
+        "Her malzemenin doğuştan gelen sınırlamaları vardır."
+    ],
+	image: "https://ihsancetin.com.tr/ydsFile/img1/image30.JPG"
+},
+{
+    id: 31,
+    wordEn: "Potent",
+    wordTr: "Güçlü, Etkili",
+    sentencesEn: [
+        "This medicine is very potent, so only a small dose is needed.",
+        "He delivered a potent argument during the debate."
+    ],
+    sentencesTr: [
+        "Bu ilaç çok etkilidir, bu yüzden küçük bir doz yeterlidir.",
+        "Tartışma sırasında güçlü bir argüman sundu."
+    ]
+},
+{
+    id: 32,
+    wordEn: "Trivial",
+    wordTr: "Önemsiz, Basit",
+    sentencesEn: [
+        "They wasted hours arguing about trivial details.",
+        "Most of his complaints seemed trivial to the manager."
+    ],
+    sentencesTr: [
+        "Önemsiz detaylar hakkında tartışarak saatlerini harcadılar.",
+        "Şikayetlerinin çoğu müdüre önemsiz göründü."
+    ]
+},
+{
+    id: 33,
+    wordEn: "Explicit",
+    wordTr: "Açık, Belirgin",
+    sentencesEn: [
+        "The instructions were explicit and easy to follow.",
+        "She gave explicit permission for the data to be used."
+    ],
+    sentencesTr: [
+        "Talimatlar açıktı ve takip etmesi kolaydı.",
+        "Verilerin kullanılmasına açık izin verdi."
+    ]
+},
+{
+    id: 34,
+    wordEn: "Implicit",
+    wordTr: "Kapalı, Örtülü",
+    sentencesEn: [
+        "There was an implicit message in his speech.",
+        "Trust is implicit in strong relationships."
+    ],
+    sentencesTr: [
+        "Konuşmasında örtülü bir mesaj vardı.",
+        "Güçlü ilişkilerde güven örtülü olarak bulunur."
+    ]
+},
+{
+    id: 35,
+    wordEn: "Infer",
+    wordTr: "Çıkarım yapmak",
+    sentencesEn: [
+        "From his silence, I inferred that he agreed.",
+        "Scientists can infer ancient climates from ice cores."
+    ],
+    sentencesTr: [
+        "Sessizliğinden, kabul ettiğini çıkardım.",
+        "Bilim insanları buz çekirdeklerinden eski iklimleri çıkarım yapabilir."
+    ]
+},
+{
+    id: 36,
+    wordEn: "Predominant",
+    wordTr: "Baskın, Çoğunlukta olan",
+    sentencesEn: [
+        "The predominant color in the painting is blue.",
+        "English is the predominant language in international business."
+    ],
+    sentencesTr: [
+        "Tablodaki baskın renk mavidir.",
+        "Uluslararası iş dünyasında baskın dil İngilizcedir."
+    ]
+},
+{
+    id: 37,
+    wordEn: "Homogeneous",
+    wordTr: "Homojen, Tekdüze",
+    sentencesEn: [
+        "The mixture must be homogeneous for the experiment to work.",
+        "The region is culturally homogeneous."
+    ],
+    sentencesTr: [
+        "Deneyin çalışması için karışımın homojen olması gerekir.",
+        "Bölge kültürel olarak homojendir."
+    ]
+},
+{
+    id: 38,
+    wordEn: "Heterogeneous",
+    wordTr: "Heterojen, Türdeş olmayan",
+    sentencesEn: [
+        "The sample was heterogeneous and required further separation.",
+        "Cities are often heterogeneous in terms of population."
+    ],
+    sentencesTr: [
+        "Numune heterojendi ve daha fazla ayrıştırma gerektirdi.",
+        "Şehirler nüfus açısından genellikle heterojendir."
+    ]
+},
+{
+    id: 39,
+    wordEn: "Quantify",
+    wordTr: "Nicelendirmek, Miktarını belirlemek",
+    sentencesEn: [
+        "It is difficult to quantify the impact of the new policy.",
+        "The researchers tried to quantify the level of stress in participants."
+    ],
+    sentencesTr: [
+        "Yeni politikanın etkisini nicelendirmek zordur.",
+        "Araştırmacılar katılımcıların stres seviyesini nicelendirmeye çalıştı."
+    ]
+}
+
+
+
+
+    ];
+
+    // --- DEĞİŞKENLER ---
+    let currentIndex = 0; // Şu anki kelimenin indexi (0'dan başlar)
+    let isEnglish = true; // true = İngilizce, false = Türkçe
+
+    // --- ELEMENTLER ---
+    const imgEl = document.getElementById('mainImage');
+    const wordEl = document.getElementById('wordText');
+    const sent1El = document.getElementById('sentence1');
+    const sent2El = document.getElementById('sentence2');
+    const cardArea = document.getElementById('cardArea');
+    const navBar = document.getElementById('navBar');
+
+    // --- BAŞLANGIÇ ---
+    function init() {
+        createNavButtons();
+        loadWord(currentIndex);
+    }
+
+    // --- NAVİGASYON BUTONLARINI OLUŞTURMA (1, 10, 20... 90) ---
+    function createNavButtons() {
+        const steps = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90];
+        
+        steps.forEach(step => {
+            const btn = document.createElement('button');
+            btn.innerText = step;
+            btn.className = 'nav-num';
+            btn.id = 'nav-btn-' + step;
+            // Butona basınca o kelimeye git (index = step - 1)
+            btn.onclick = () => jumpToWord(step - 1);
+            navBar.appendChild(btn);
+        });
+    }
+
+    // --- KELİMEYİ YÜKLEME ---
+    function loadWord(index) {
+        // Eğer liste dışına çıkılırsa başa dön veya sona git
+        if (index >= vocabularyList.length) index = 0;
+        if (index < 0) index = vocabularyList.length - 1;
+
+        currentIndex = index;
+        isEnglish = true; // Her yeni kelimede İngilizce başla
+        renderCard();
+        updateNavHighlight();
+    }
+
+    // --- KARTI GÖRSELLEŞTİRME ---
+    function renderCard() {
+        const data = vocabularyList[currentIndex];
+        
+        // Resim
+        imgEl.src = data.image;
+        
+        // Dil Kontrolü
+        if (isEnglish) {
+            wordEl.innerText = "#" + data.id + " " + data.wordEn;
+            sent1El.innerText = data.sentencesEn[0];
+            sent2El.innerText = data.sentencesEn[1];
+            cardArea.classList.remove('tr-mode');
+        } else {
+            wordEl.innerText = "#" + data.id + " " + data.wordTr;
+            sent1El.innerText = data.sentencesTr[0];
+            sent2El.innerText = data.sentencesTr[1];
+            cardArea.classList.add('tr-mode');
+        }
+    }
+
+    // --- ÜST MENÜ RENK GÜNCELLEME ---
+    function updateNavHighlight() {
+        // Tüm butonların aktifliğini kaldır
+        const allBtns = document.querySelectorAll('.nav-num');
+        allBtns.forEach(b => b.classList.remove('active'));
+
+        // Mantık: Kelime ID'sine göre hangi onluk dilimdeyiz?
+        // Örn: ID 77 -> 70-79 aralığı -> 70 butonu aktif olmalı.
+        // Formül: Math.floor(ID / 10) * 10. 
+        // Ancak ID 1-9 arası için özel durum (1 butonu).
+        
+        const currentID = vocabularyList[currentIndex].id;
+        let targetBtnNum = 1;
+
+        if (currentID >= 10) {
+            targetBtnNum = Math.floor(currentID / 10) * 10;
+        } else {
+            targetBtnNum = 1; // 1-9 arası için 1 butonu
+        }
+
+        // İlgili butonu bul ve active yap
+        const activeBtn = document.getElementById('nav-btn-' + targetBtnNum);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+        }
+    }
+
+    // --- ETKİLEŞİM FONKSİYONLARI ---
+
+    function toggleLanguage() {
+        isEnglish = !isEnglish;
+        renderCard();
+    }
+
+    function nextWord() {
+        loadWord(currentIndex + 1);
+    }
+
+    function prevWord() {
+        loadWord(currentIndex - 1);
+    }
+
+    function jumpToWord(index) {
+        // Eğer o indexte veri yoksa (örn 90'a bastınız ama 10 kelime var)
+        if (index >= vocabularyList.length) {
+            alert("Bu kelime henüz eklenmedi!");
+            return;
+        }
+        loadWord(index);
+    }
+
+    function randomWord() {
+        // 0 ile liste uzunluğu arasında rastgele sayı
+        const randIndex = Math.floor(Math.random() * vocabularyList.length);
+        loadWord(randIndex);
+    }
+
+    // Uygulamayı başlat
+    init();
+
+</script>
+
+</body>
+</html>
