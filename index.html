@@ -3,15 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İHSAN ÇETİN - Mekatronik Mühendisi</title>
+    <title>İHSAN ÇETİN | MEKATRONİK MÜHENDİSİ</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1> İHSAN ÇETİN </h1>
-        <p>Mekatronik Mühendisi - Bilişim Sistemleri</p>
-        <p>Yenilikçi, teknolojinin sınırlarını zorlayan bir mühendis olarak, akıllı üretim ve dijital dönüşüm üzerine çalışıyorum. Endüstride bilişim teknolojilerini kullanarak düşük maliyetle, daha az iş kazasıyla, daha az kayıpla ve daha yüksek verimle toplam üretkenliği arttırmayı hedefliyorum.</p>
-        <a href="https://www.linkedin.com/in/ihsancetin/" class="contact-button">İletişime Geç</a>
+    <div class="hmi-screen">
+
+        <header class="top-bar">
+            <div id="ip-address" class="top-info">234.345.257.87</div>
+            <div id="date-time" class="top-info">1.12.2025 23:05</div>
+        </header>
+
+        <main class="main-content">
+            <div class="profile-box">
+                <div class="info-line name-line">İHSAN ÇETİN</div>
+                <div class="info-line title-line">MEKATRONİK MÜHENDİSİ</div>
+            </div>
+
+            <div class="contact-area">
+                <button class="hmi-button" id="email-button" onclick="toggleEmail()">E-posta</button>
+                <a href="https://linkedin.com/in/ihsancetin" target="_blank" class="hmi-button" id="linkedin-button">LinkedIn</a>
+            </div>
+
+            <div class="feedback-box" id="email-feedback-box">
+                </div>
+            
+            <footer class="system-status">
+                <p>STATUS: ONLINE | PROCESS: IDLE | SYSTEM CHECKS: OK</p>
+            </footer>
+
+        </main>
     </div>
+
+    <script>
+
+        const realEmail = 'mail@ihsancetin.com.tr';
+        const realLinkedIn = 'https://www.linkedin.com/in/ihsancetin';
+
+        // E-posta Adresi Göster/Gizle Fonksiyonu
+        function toggleEmail() {
+            const box = document.getElementById('email-feedback-box');
+            if (box.textContent === realEmail) {
+                box.textContent = ''; // Alanı tekrar boşalt
+            } else {
+                box.textContent = realEmail; // E-posta adresini göster
+            }
+        }
+
+        // Tarih/Saat ve IP Adresini Güncelleme Fonksiyonu
+        function updateHMI() {
+            const now = new Date();
+            // Tarih: D.M.YYYY
+            const dateStr = `${now.getDate().toString().padStart(2, '0')}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getFullYear()}`;
+            // Saat: HH:MM:SS
+            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+            
+            document.getElementById('date-time').textContent = `${dateStr} ${timeStr}`;
+            
+
+        }
+
+        // Sayfa yüklendiğinde ve her saniye güncelleme
+        updateHMI();
+        setInterval(updateHMI, 1000);
+    </script>
 </body>
 </html>
